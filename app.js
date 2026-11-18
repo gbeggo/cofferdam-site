@@ -95,6 +95,8 @@
       mv.setAttribute("camera-orbit", "30deg 65deg auto"); mv.setAttribute("touch-action", "pan-y");
       mv.addEventListener("load", function () { node.classList.add("ready"); });
       node.insertBefore(mv, node.firstChild);
+      self.ModelViewerElement = self.ModelViewerElement || {};
+      self.ModelViewerElement.dracoDecoderLocation = new URL("vendor/draco/", location.href).href;   // сетки сжаты Draco; декодер свой, без gstatic
       var s = document.createElement("script"); s.type = "module"; s.src = "vendor/model-viewer.min.js"; document.head.appendChild(s);
       if (want) set(want);
     }
