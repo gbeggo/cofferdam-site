@@ -65,17 +65,59 @@
     feats(D, ids);
     // клампы: ряд стальных бирок, нажатие — когда он нужен (раньше был длинный список — Георгий: «чуть перегружен»)
     var cl = document.getElementById("clamplist"), tags = el("div", { "class": "tags" }), info = el("div", { "class": "cinfo", "aria-live": "polite" });
+    var box = el("div", { "class": "cbox" }), view = clampView();
     (D.clamps || []).forEach(function (c, i) {
       var t = el("button", { "class": "tag", type: "button", text: c.id, "aria-pressed": "false" });
       t.addEventListener("click", function () {
         [].forEach.call(tags.children, function (x) { x.setAttribute("aria-pressed", String(x === t)); });
         info.innerHTML = ""; info.appendChild(el("div", { "class": "where", text: c.where })); info.appendChild(el("div", { "class": "note", text: c.note }));
         info.classList.remove("in"); info.getBoundingClientRect(); info.classList.add("in");
+        view.show(c);
       });
       tags.appendChild(t); if (i === 0) setTimeout(function () { t.click(); });
     });
-    cl.appendChild(tags); cl.appendChild(info);
+    box.appendChild(info); box.appendChild(view.node);
+    cl.appendChild(tags); cl.appendChild(box);
     punchIn();
+  }
+
+  // 3D-модель клампа (из Tripo, облегчённая h1_clamp_web.py): крутится сама, можно повернуть пальцем/мышью.
+  // Библиотека model-viewer (~1 МБ) подгружается, только когда раздел клампов близко к экрану.
+  function clampView() {
+    var node = el("div", { "class": "cview" }), mv = null, cur = null, sw = el("div", { "class": "cswitch" }), want = null;
+    var hint = el("div", { "class": "chint", text: "Покрутите" });
+    function load() {
+      if (mv) return; mv = document.createElement("model-viewer");
+      ["camera-controls", "auto-rotate", "disable-zoom"].forEach(function (a) { mv.setAttribute(a, ""); });
+      mv.setAttribute("auto-rotate-delay", "0"); mv.setAttribute("rotation-per-second", "40deg");
+      mv.setAttribute("interaction-prompt", "none"); mv.setAttribute("shadow-intensity", "0");
+      mv.setAttribute("exposure", "1.5"); mv.setAttribute("environment-image", "neutral");
+      mv.setAttribute("camera-orbit", "30deg 65deg auto"); mv.setAttribute("touch-action", "pan-y");
+      mv.addEventListener("load", function () { node.classList.add("ready"); });
+      node.insertBefore(mv, node.firstChild);
+      var s = document.createElement("script"); s.type = "module"; s.src = "vendor/model-viewer.min.js"; document.head.appendChild(s);
+      if (want) set(want);
+    }
+    function set(name) {
+      want = name; if (!mv) return;
+      var src = "media/clamps/" + name + ".glb"; if (mv.getAttribute("src") === src) return;   // тот же кламп — не прятать
+      node.classList.remove("ready"); mv.setAttribute("alt", "Кламп " + name.toUpperCase() + ", 3D-модель");
+      mv.setAttribute("src", src);
+    }
+    function show(c) {
+      var m = c.models || []; node.hidden = !m.length; if (!m.length) return;
+      cur = c; sw.innerHTML = ""; sw.hidden = m.length < 2;
+      m.forEach(function (name, i) {
+        var b = el("button", { type: "button", text: name.toUpperCase(), "aria-pressed": String(i === 0) });
+        b.addEventListener("click", function () { [].forEach.call(sw.children, function (x) { x.setAttribute("aria-pressed", String(x === b)); }); set(name); });
+        sw.appendChild(b);
+      });
+      set(m[0]);
+    }
+    node.appendChild(sw); node.appendChild(hint);
+    var io = "IntersectionObserver" in window ? new IntersectionObserver(function (e) { if (e[0].isIntersecting) { load(); io.disconnect(); } }, { rootMargin: "600px" }) : null;
+    if (io) setTimeout(function () { io.observe(node); }); else load();
+    return { node: node, show: show };
   }
 
   // «Что умеет атлас»: отверстия-возможности. Наведение — в отверстии зуб; нажатие — попробовать
@@ -302,7 +344,8 @@
   // № 14 режим «у кресла» (18.11 переделан по словам Георгия: «нужно какой-то свич… у кресла или полный формат»): переключатель
   // «Полный / У кресла» вверху. У кресла — отдельный экран: один шаг на весь экран, ролик шага крутится сам (не надо листать
   // в перчатках), огромный номер, только название, большие кнопки «Назад / Далее», касание слева/справа и свайп тоже листают.
-  // Запоминается на этом устройстве; ?chair=1 — сразу у кресла.
+  // Ситуация всегда открывается полной версией (Георгий 18.11: «у кресла» не такое впечатляющее — его надо выбрать);
+  // ?chair=1 — сразу у кресла (только по явной ссылке «У кресла» из «Что умеет атлас»). Раньше выбор запоминался на устройстве.
   function chairMode(S) {
     var box = document.getElementById("mode"), P = document.getElementById("chair"); if (!box || !P) return;
     var steps = S.steps, k = 0, on = false, V = document.getElementById("ch-video"), soon = document.getElementById("ch-soon");
@@ -329,14 +372,13 @@
     function set(v, keepStep) {
       on = v; document.body.classList.toggle("chair-on", v); P.hidden = !v;
       [].forEach.call(box.children, function (b) { b.setAttribute("aria-pressed", String((b.dataset.m === "chair") === v)); });
-      try { localStorage.setItem("atlas-chair", v ? "1" : "0"); } catch (e) {}
       if (v) {                                                   // начать с шага, который сейчас на экране
         if (!keepStep) { var mid = innerHeight / 2; steps.forEach(function (st, i) { var e = document.getElementById("step-" + st.n); if (e && e.getBoundingClientRect().top < mid) k = i; }); }
         show(k); if (holes) holes.classList.add("shown");
       } else { V.pause(); var t = document.getElementById("step-" + steps[k].n); if (t && k > 0) scrollTo(0, t.offsetTop); }
     }
     [].forEach.call(box.children, function (b) { b.addEventListener("click", function () { set(b.dataset.m === "chair"); }); });
-    var start = qs.get("chair") === "1"; try { if (qs.get("chair") === null) start = localStorage.getItem("atlas-chair") === "1"; } catch (e) {}
+    var start = qs.get("chair") === "1"; try { localStorage.removeItem("atlas-chair"); } catch (e) {}
     if (start) { k = 0; set(true, true); }
     return { isOn: function () { return on; } };
   }
