@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17559C">
+<title>Атлас изоляции</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;800&display=swap">
+<link rel="stylesheet" href="tokens.css?v=2026111822">
+<link rel="stylesheet" href="atlas.css?v=2026111822">
+</head>
+<body data-page="situation">
+<nav class="topbar"><a class="back" data-home href="index.html#sits">←<span class="wide"> все отверстия</span></a><div class="mode" id="mode" role="group" aria-label="Формат"><button type="button" data-m="full" aria-pressed="true">Полный</button><button type="button" data-m="chair" aria-pressed="false">У кресла</button></div></nav>
+<main id="main"></main>
+<footer class="outro">
+  <b>Атлас изоляции</b>
+  <span>Сухое поле · @dr.beglary</span>
+</footer>
+<div class="sheet-bg" id="sheet-bg"></div>
+<aside class="sheet" id="sheet" aria-label="Типичная ошибка">
+  <div class="label">Частая ошибка</div>
+  <div class="content"></div>
+  <button class="close" type="button">Понятно</button>
+</aside>
+<!-- режим «у кресла»: шаг за шагом, ролик шага сам крутится, большие кнопки (в перчатках) -->
+<section class="chair" id="chair" aria-label="Шаги у кресла" hidden>
+  <div class="ch-stage"><video id="ch-video" muted loop playsinline></video><div class="ch-soon" id="ch-soon">Анимация готовится</div>
+    <button class="ch-zone prev" type="button" aria-label="Предыдущий шаг"></button><button class="ch-zone next" type="button" aria-label="Следующий шаг"></button></div>
+  <div class="ch-cap"><div class="mega" id="ch-n">01</div><div><div class="label" id="ch-of"></div><h2 class="print" id="ch-title"></h2></div></div>
+  <div class="ch-btns"><button type="button" id="ch-prev">← Назад</button><button type="button" id="ch-next">Далее →</button></div>
+</section>
+<div class="sheet-bg" id="tray-bg"></div>
+<aside class="tray" id="tray" aria-label="Список для ассистента">
+  <div class="label" id="tray-sub"></div>
+  <h2 class="print">Лоток ассистента</h2>
+  <ol id="tray-list"></ol>
+  <div class="tray-btns"><button type="button" id="tray-print">Печать</button><button type="button" id="tray-share">Отправить</button><button type="button" class="ghost" id="tray-close">Закрыть</button></div>
+</aside>
+<script src="app.js?v=2026111822"></script>
+</body>
+</html>

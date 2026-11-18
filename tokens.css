@@ -1,0 +1,38 @@
+/* Тема «Под платком» (docs/design-pod-platkom.md): страница — это сам платок. Цвета только из сцены изоляции:
+   латекс (фон), слоновая кость зуба (готово, активно), сталь (инструменты), розовая десна (ошибка), тёмное отверстие (впереди).
+   ВСЕ цвета, шрифты и размеры — только здесь, в atlas.css только var(--…). Прежний дизайн «Кардинал» — в истории git (до 18.11). */
+:root {
+  --latex: #17559C;            /* платок; сменить цвет платка = поменять эту строку (рендеры пока синие) */
+  --latex-deep: #103C70;       /* тень платка, затемнение у краёв */
+  --latex-rgb: 23, 85, 156;
+  --hole: #061A33;             /* пробитое, пустое отверстие */
+  --hole-shadow: inset 0 8px 14px rgba(0, 0, 0, .8), 0 2px 0 rgba(255, 255, 255, .28);
+  --hole-rim: 0 0 0 5px rgba(8, 34, 68, .55);
+  --ivory: radial-gradient(circle at 42% 38%, #FFF8E6 0%, #EADCB8 58%, #B9A678 100%);
+  --ivory-flat: #F3E8CC;
+  --steel: linear-gradient(175deg, #F4F7FA 0%, #AEB9C5 46%, #E6ECF2 54%, #8E9AA8 100%);
+  --steel-ink: #1B2632;
+  --steel-shadow: 0 6px 14px rgba(4, 20, 44, .45), inset 0 1px 0 #FFFFFF;
+  --gum: radial-gradient(ellipse at 40% 35%, #FFC9C2 0%, #F2A199 60%, #D9796F 100%);
+  --gum-ink: #4A1512;
+  --gum-shadow: inset 0 10px 18px rgba(90, 20, 16, .45), 0 0 0 6px rgba(8, 34, 68, .5);
+
+  --fg: #FFFFFF;
+  --fg-soft: rgba(255, 255, 255, .78);
+  --fg-line: rgba(255, 255, 255, .55);
+  --fg-faint: rgba(255, 255, 255, .22);
+  --hover: #FFE9B8;
+
+  --font: "Geologica", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --w-print: 800;              /* «печать по резине»: 800, прописные, плотно */
+  --track-print: -.05em;
+  --fs-mega: clamp(120px, 24vw, 340px);
+  --fs-h1: clamp(44px, 9.4vw, 148px);
+  --fs-h2: clamp(30px, 4.6vw, 64px);
+  --fs-h3: clamp(24px, 3vw, 40px);
+  --fs-body: clamp(16px, 1.3vw, 18px);
+  --fs-small: 14px;
+
+  --gutter: max(16px, 4vw);
+  --c-stage: var(--latex);     /* фон под кадрами (подменяется цветом угла кадра) */
+}

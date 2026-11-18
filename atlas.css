@@ -1,0 +1,324 @@
+/* «Под платком»: вёрстка и поведение. Цвета, шрифты, размеры — только через переменные из tokens.css.
+   Правила: форма одна — отверстие; карточек и рамок нет, текст напечатан прямо по латексу; рендер вырастает из страницы. */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { background: var(--latex); }
+body { background: var(--latex); color: var(--fg); font-family: var(--font); font-size: var(--fs-body); line-height: 1.5;
+       -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--hover); }
+img { max-width: 100%; display: block; }
+button { font: inherit; color: inherit; }
+.wrap { padding-left: var(--gutter); padding-right: var(--gutter); }
+.print { font-weight: var(--w-print); letter-spacing: var(--track-print); text-transform: uppercase; line-height: .9; }
+.label { font-size: var(--fs-small); color: var(--fg-soft); }
+:focus-visible { outline: 3px solid var(--hover); outline-offset: 3px; }
+
+/* ---------- отверстие: общий вид ---------- */
+.hole { display: block; border-radius: 50%; aspect-ratio: 1 / 1; background: var(--hole); box-shadow: var(--hole-shadow); }
+.hole.tooth { background: var(--ivory); box-shadow: var(--hole-rim); }
+.hole.pic { background: var(--hole) center / cover no-repeat; box-shadow: var(--hole-rim), inset 0 0 0 2px rgba(255, 255, 255, .15); }
+
+/* ---------- главная: рендер во весь экран, девиз напечатан по платку ---------- */
+.hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+               background: linear-gradient(180deg, rgba(16, 60, 112, .72) 0%, rgba(var(--latex-rgb), 0) 34%, rgba(var(--latex-rgb), 0) 62%, var(--latex) 100%); }
+.hero h1, .hero p, .hero .rubric { position: relative; z-index: 1; margin: 0; }
+.hero .rubric { padding: 22px var(--gutter) 0; font-size: var(--fs-small); color: var(--fg-soft); }
+.hero h1 { padding: 18px var(--gutter) 0; font-size: var(--fs-h1); line-height: .86; letter-spacing: -.055em; }
+.hero p { padding: 0 var(--gutter) 44px; font-size: clamp(24px, 4.2vw, 64px); text-align: right; }
+
+/* шесть отверстий по дуге */
+.sits { padding-top: 72px; }
+.sits > p { margin: 0; max-width: 30em; }
+.arc { position: relative; width: 100%; aspect-ratio: 3 / 1; margin-top: 24px; }
+.arc .hole { position: absolute; transition: transform .25s ease; }
+.arc a.hole:hover, .arc a.hole:focus-visible { transform: scale(1.08); }
+.arc .n { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 10px); font-weight: var(--w-print); font-size: clamp(14px, 1.6vw, 22px); color: var(--fg); }
+.sitlist { margin: 48px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; line-height: 1.3; }
+.sitlist li { border-top: 1px solid var(--fg-line); padding-top: 12px; color: var(--fg-soft); }
+.sitlist li.ready { border-top: 3px solid var(--fg); color: var(--fg); }
+.sitlist b { font-weight: var(--w-print); display: block; }
+.sitlist a { display: block; }
+.sitlist small { display: block; margin-top: 4px; font-size: var(--fs-small); color: var(--fg-soft); }
+
+section.block { padding-top: 120px; }
+section.block > h2 { margin: 0; font-size: var(--fs-h1); }
+section.block > .sub { margin: 20px 0 0; max-width: 32em; }
+
+/* пробойник: пять отверстий от большего к меньшему, весь платок сразу */
+.punch5 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px 24px; padding-top: 64px; align-items: end; }
+.punch5 button { all: unset; cursor: pointer; display: block; }
+.punch5 .hole { transition: transform .2s, box-shadow .2s; }
+.punch5 button.on .hole { transform: scale(1.06); box-shadow: var(--hole-shadow), 0 0 0 4px var(--fg); }
+.punch5 .no { margin-top: 18px; font-weight: var(--w-print); font-size: 34px; letter-spacing: -.04em; }
+.punch5 .who { line-height: 1.35; }
+.punch5 small { display: block; color: var(--fg-soft); font-size: var(--fs-small); }
+.dam { margin-top: 88px; }
+.dam h3 { margin: 0 0 8px; font-size: var(--fs-h3); }
+.dam > p { margin: 0 0 32px; max-width: 34em; color: var(--fg-soft); }
+.row16 { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); justify-items: center; row-gap: 6px; }
+.row16 .t { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; cursor: pointer; }
+.row16.lo .t { flex-direction: column-reverse; }
+.row16 .row-up { align-items: end; }
+.row16 .t span { font-size: clamp(9px, 1.2vw, 15px); }
+.row16 .hole { transition: background .3s, transform .3s; }
+.row16 .t.hl .hole { background: var(--ivory); box-shadow: var(--hole-rim); transform: scale(1.08); }
+.row16.dim .t:not(.hl) { opacity: .45; }
+.row16.up { align-items: end; }
+.row16.lo { align-items: start; }
+.dam .line { height: 1px; background: var(--fg-line); margin: 18px 0; }
+.dam .foot { margin: 28px 0 0; font-size: var(--fs-small); color: var(--fg-soft); max-width: 34em; }
+
+/* клампы: номер выбит на стальной бирке */
+.tag { display: inline-block; padding: 14px 22px; border-radius: 6px; font-weight: var(--w-print); letter-spacing: .02em; text-transform: uppercase;
+       color: var(--steel-ink); background: var(--steel); box-shadow: var(--steel-shadow); text-shadow: 0 1px 0 rgba(255, 255, 255, .8); line-height: 1; }
+.clamps { padding: 56px 0 0; }
+.clamps .row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 40px; padding: 22px 0; border-top: 1px solid var(--fg-line); }
+.clamps .tag { min-width: 170px; text-align: center; font-size: clamp(30px, 4vw, 52px); padding: 18px 24px; }
+.clamps .where { font-weight: var(--w-print); font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.03em; text-transform: uppercase; line-height: 1.05; }
+.clamps .note { margin-top: 6px; line-height: 1.45; color: var(--fg-soft); }
+.clamps .row > div { flex: 1 1 320px; }
+
+footer.outro { padding: 120px var(--gutter) 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: var(--fs-small); }
+footer.outro b { font-weight: var(--w-print); text-transform: uppercase; letter-spacing: -.02em; }
+
+/* ---------- страница ситуации ---------- */
+.topbar { position: fixed; z-index: 20; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+          padding: 10px var(--gutter); pointer-events: none; transition: background .3s; }
+.topbar.solid { background: linear-gradient(180deg, rgba(var(--latex-rgb), .96) 0%, rgba(var(--latex-rgb), .82) 70%, rgba(var(--latex-rgb), 0) 100%); }
+.topbar > * { pointer-events: auto; }
+.topbar .back { font-size: 15px; padding: 12px 0; white-space: nowrap; }
+/* шаги — ряд отверстий: зуб прошёл в отверстие — шаг пройден, текущий крупнее и с кольцом, впереди — пустые */
+.holes { display: flex; align-items: center; gap: clamp(5px, 1.2vw, 14px); opacity: 0; transform: translateY(-6px); transition: opacity .3s, transform .3s; }
+.holes.shown { opacity: 1; transform: none; }
+.holes button { all: unset; cursor: pointer; width: clamp(18px, 2.6vw, 30px); border-radius: 50%; aspect-ratio: 1 / 1; background: var(--hole);
+                box-shadow: var(--hole-shadow); transition: width .25s, background .25s, box-shadow .25s; }
+.holes button.done { background: var(--ivory); box-shadow: 0 0 0 3px rgba(8, 34, 68, .55); }
+.holes button.on { width: clamp(26px, 3.8vw, 42px); background: var(--ivory); box-shadow: 0 0 0 3px rgba(8, 34, 68, .55), 0 0 0 5px var(--fg); }
+
+.intro { padding-top: 96px; display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: flex-end; }
+.intro .mega { font-size: var(--fs-mega); line-height: .74; letter-spacing: -.07em; font-weight: var(--w-print); }
+.intro > div:last-child { flex: 1 1 420px; padding-bottom: 8px; }
+.intro .label { margin-bottom: 14px; }
+.intro h1 { margin: 0; font-size: clamp(32px, 5vw, 72px); }
+.intro p { margin: 20px 0 0; max-width: 34em; }
+/* рендер вырастает из страницы: края растворяются в цвет платка */
+.cover { margin-top: 40px; position: relative; }
+.cover img { width: 100%; max-height: 86svh; object-fit: cover;
+             -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%);
+             mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 78%, transparent 100%); }
+
+.take { padding-top: 64px; }
+.take h2 { margin: 0 0 20px; font-size: var(--fs-small); font-weight: 400; color: var(--fg-soft); }
+.take .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; padding: 14px 0; border-top: 1px solid var(--fg-faint); }
+.take .tag { font-size: clamp(15px, 1.5vw, 19px); padding: 12px 18px; }
+.take .tag.soft { color: var(--fg); background: none; box-shadow: none; text-shadow: none; border: 1px dashed var(--fg); border-radius: 999px; }
+.take .note { flex: 1 1 280px; color: var(--fg-soft); }
+.take .note a { color: var(--fg); border-bottom: 1px solid var(--fg-line); }
+
+/* шаг: прокрутка ведёт кадры */
+.step { position: relative; background: var(--latex); }
+.step .stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--c-stage); }
+.step canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.step .shade { position: absolute; inset: 0; pointer-events: none;
+               background: linear-gradient(180deg, var(--latex) 0%, rgba(var(--latex-rgb), 0) 16%, rgba(var(--latex-rgb), 0) 55%, rgba(var(--latex-rgb), .92) 88%, var(--latex) 100%); }
+.step .cap { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 6vh; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 36px; }
+.step .cap .mega { font-weight: var(--w-print); font-size: clamp(88px, 14vw, 200px); line-height: .74; letter-spacing: -.07em; }
+.step .cap > div { flex: 1 1 360px; max-width: 34em; }
+.step .cap h3 { margin: 0; font-size: clamp(28px, 4vw, 56px); }
+.step .cap p { margin: 14px 0 0; color: var(--fg); text-shadow: 0 1px 12px rgba(6, 26, 51, .55); }
+.step .rail { position: absolute; right: 12px; top: 50%; height: 30vh; width: 2px; transform: translateY(-50%); background: var(--fg-faint); }
+.step .rail b { position: absolute; inset: 0; background: var(--fg); transform-origin: top; transform: scaleY(0); }
+.step .load { position: absolute; left: var(--gutter); top: 76px; font-size: var(--fs-small); color: var(--fg-soft); transition: opacity .6s; }
+@media (orientation: landscape) and (min-width: 761px) { .step .cap .mega { font-size: clamp(72px, 10vw, 150px); } .step .cap h3 { font-size: clamp(26px, 3vw, 44px); } }
+@media (max-width: 760px) and (orientation: portrait) {
+  .step .shade { background: linear-gradient(180deg, var(--latex) 0%, rgba(var(--latex-rgb), 0) 10%, rgba(var(--latex-rgb), 0) 52%, var(--latex) 66%, var(--latex) 100%); }
+  .step .cap { bottom: 4vh; } .step .cap .mega { font-size: 96px; } }
+.step.clip .stage { position: relative; height: auto; display: flex; flex-direction: column; }
+.step.clip video { width: 100%; display: block; -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 85%, transparent);
+                   mask-image: linear-gradient(180deg, transparent, #000 12%, #000 85%, transparent); }
+.step.clip .shade { display: none; }
+.step.clip .cap, .step.still .cap { position: relative; left: auto; right: auto; bottom: auto; padding: 5vh var(--gutter) 9vh; }
+.step.still .stage { position: relative; height: auto; min-height: 60svh; display: flex; align-items: flex-end; background: var(--latex); }
+.step.still .shade { display: none; }
+.step.still .soon { display: inline-block; margin-top: 1.2em; padding: 6px 14px; border: 1px dashed var(--fg-line); border-radius: 999px;
+                    color: var(--fg-soft); font-size: var(--fs-small); }
+
+/* ошибка — разрыв платка, в нём видна десна */
+.after { padding-top: 120px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px 56px; }
+.tear { all: unset; cursor: pointer; flex: 1 1 420px; min-height: 280px; display: flex; flex-direction: column; justify-content: center; padding: 48px 60px;
+        color: var(--gum-ink); background: var(--gum); border-radius: 62% 38% 55% 45% / 48% 60% 40% 52%; transform: rotate(-3deg);
+        box-shadow: var(--gum-shadow); transition: transform .3s; }
+.tear:hover, .tear:focus-visible { transform: rotate(-1deg) scale(1.02); }
+.tear .label { color: var(--gum-ink); opacity: .8; }
+.tear .print { margin-top: 8px; font-size: clamp(26px, 3.4vw, 44px); }
+.tear .more { margin-top: 14px; font-size: var(--fs-small); text-decoration: underline; }
+.after .side { flex: 1 1 320px; }
+.after .side p { margin: 0; }
+.after .side .print { margin-top: 14px; font-size: clamp(24px, 3vw, 38px); line-height: 1; }
+/* план Б — один длинный разрез */
+.planb { padding-top: 120px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px 56px; }
+.planb > div:first-child { flex: 1 1 320px; }
+.planb .print { margin: 8px 0 0; font-size: clamp(26px, 3.4vw, 44px); }
+.planb p { margin: 14px 0 0; }
+.slit { flex: 1.4 1 420px; height: 76px; border-radius: 999px; background: var(--hole); box-shadow: var(--hole-shadow);
+        display: flex; align-items: center; justify-content: space-around; padding: 0 5%; }
+.slit span { width: 46px; border-radius: 50%; aspect-ratio: 1 / 1; background: var(--ivory); }
+.check { padding-top: 120px; padding-bottom: 48px; }
+.check .print { margin: 8px 0 0; font-size: clamp(26px, 4.4vw, 60px); max-width: 16em; line-height: .92; }
+
+/* выезжающая карточка ошибки: тот же латекс, край — десна */
+.sheet-bg { position: fixed; inset: 0; z-index: 40; background: rgba(6, 26, 51, .55); opacity: 0; pointer-events: none; transition: opacity .3s; }
+.sheet { position: fixed; z-index: 41; left: 0; right: 0; bottom: 0; max-height: 86svh; overflow: auto; background: var(--latex); color: var(--fg);
+         border-top: 10px solid #F2A199; padding: 18px var(--gutter) calc(28px + env(safe-area-inset-bottom));
+         transform: translateY(105%); transition: transform .38s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 -20px 60px -20px rgba(0, 0, 0, .5); }
+.sheet h3 { margin: .4em 0 .5em; font-size: var(--fs-h3); }
+.sheet .fix { border-left: 3px solid var(--ivory-flat); padding-left: 14px; }
+.sheet .close { all: unset; cursor: pointer; display: inline-block; margin-top: 12px; padding: 12px 22px; border-radius: 999px; background: var(--ivory-flat);
+                color: var(--steel-ink); font-weight: var(--w-print); text-transform: uppercase; letter-spacing: -.02em; }
+body.sheet-open .sheet { transform: none; }
+body.sheet-open .sheet-bg { opacity: 1; pointer-events: auto; }
+
+/* ---------- курсор-пробойник: нажатие на свободное место оставляет отверстие, оно затягивается ---------- */
+.punchmark { position: fixed; z-index: 60; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; pointer-events: none;
+             background: var(--hole); box-shadow: var(--hole-shadow); animation: punch 2.4s ease-out forwards; }
+.punchmark::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); animation: ripple .7s ease-out forwards; }
+@keyframes punch { 0% { transform: scale(.2) } 8% { transform: scale(1.1) } 14% { transform: scale(1) } 70% { transform: scale(1); opacity: 1 } 100% { transform: scale(0); opacity: 0 } }
+@keyframes ripple { 0% { transform: scale(.6); opacity: 1 } 100% { transform: scale(2.4); opacity: 0 } }
+
+/* ---------- вход в ситуацию: отверстие растягивается на весь экран ---------- */
+.portal { position: fixed; inset: 0; z-index: 80; background: var(--latex) center / cover no-repeat; pointer-events: none;
+          transition: clip-path .62s cubic-bezier(.6, 0, .3, 1); }
+body.arrive main, body.arrive .topbar { animation: arrive .5s ease-out both; }
+@keyframes arrive { from { opacity: 0 } to { opacity: 1 } }
+
+/* ---------- не найдено ---------- */
+.lost { position: relative; min-height: 100svh; padding: 48px var(--gutter); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.lost .rip { position: absolute; right: -40px; top: 12vh; width: min(60vw, 520px); aspect-ratio: 7 / 5; background: var(--gum);
+             border-radius: 58% 42% 38% 62% / 44% 58% 42% 56%; transform: rotate(-14deg); box-shadow: var(--gum-shadow); }
+.lost h1 { position: relative; margin: 0; font-size: clamp(56px, 11vw, 140px); line-height: .86; letter-spacing: -.055em; }
+.lost .foot { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.lost p { margin: 0; max-width: 24em; }
+.lost a { font-weight: var(--w-print); font-size: 20px; text-transform: uppercase; letter-spacing: -.02em; padding: 12px 0; }
+
+@media (prefers-reduced-motion: reduce) { .portal, .holes, .sheet, .tear, .arc .hole { transition: none; } .punchmark, body.arrive main { animation: none; } }
+/* невысокий экран (ноутбук с панелями): подпись шага компактнее, чтобы помещалась под кадром */
+@media (max-height: 700px) and (min-width: 761px) {
+  .step .cap { flex-wrap: nowrap; bottom: 4vh; } .step .cap .mega { font-size: clamp(64px, 14vh, 110px); }
+  .step .cap h3 { font-size: clamp(22px, 5.5vh, 36px); } .step .cap p { margin-top: 8px; font-size: 15px; } }
+@media (max-width: 600px) { .tear { min-height: 0; padding: 40px 34px; flex-basis: 100%; } .after, .planb, .check, section.block { padding-top: 88px; } }
+
+/* ---------- № 8 рамка как меню: стальной пруток с шипами, пункты висят на шипах ---------- */
+.frame { position: fixed; z-index: 30; right: 0; top: 50%; transform: translate(12px, -50%); display: flex; flex-direction: column; gap: 30px;
+         padding: 28px 18px 28px 0; opacity: 0; pointer-events: none; transition: opacity .35s, transform .35s; }
+.frame.shown { opacity: 1; pointer-events: auto; transform: translate(0, -50%); }
+.frame .rod { position: absolute; right: 12px; top: 0; bottom: 0; width: 6px; border-radius: 3px; background: linear-gradient(90deg, #8E9AA8, #F4F7FA 45%, #AEB9C5 60%, #7D8896);
+              box-shadow: 0 4px 12px rgba(4, 20, 44, .45); }
+.frame a { position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 0; padding-right: 0; }
+.frame .spike { width: 14px; height: 7px; margin-right: -2px; background: linear-gradient(180deg, #F4F7FA, #8E9AA8); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.frame span { font-size: 12px; font-weight: var(--w-print); text-transform: uppercase; letter-spacing: .02em; padding: 7px 10px; border-radius: 4px;
+              color: var(--steel-ink); background: var(--steel); box-shadow: var(--steel-shadow); transform-origin: right center; transition: transform .2s, background .2s; }
+.frame a:hover span { transform: rotate(-4deg); color: var(--steel-ink); }
+.frame a.on span { background: var(--ivory-flat); }
+@media (max-width: 760px) {
+  .frame { top: auto; bottom: 0; left: 0; right: 0; transform: translateY(12px); flex-direction: row; justify-content: space-around; gap: 0;
+           padding: 8px 8px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(0deg, rgba(var(--latex-rgb), .95) 60%, rgba(var(--latex-rgb), 0)); }
+  .frame.shown { transform: none; }
+  .frame .rod { left: 8px; right: 8px; top: auto; bottom: calc(8px + env(safe-area-inset-bottom)); width: auto; height: 6px;
+                background: linear-gradient(180deg, #8E9AA8, #F4F7FA 45%, #AEB9C5 60%, #7D8896); }
+  .frame a { flex-direction: column; justify-content: flex-end; }
+  .frame .spike { width: 7px; height: 12px; margin: 0 0 -2px; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .frame span { font-size: 11px; padding: 6px 7px; transform-origin: center bottom; }
+  footer.outro { padding-bottom: 96px; }
+}
+
+/* ---------- № 12 лоток ассистента: «что берём» одной кнопкой — печать или отправить ---------- */
+.take .traybtn { all: unset; cursor: pointer; display: inline-block; margin-top: 22px; padding: 14px 22px; border-radius: 999px; background: var(--ivory-flat);
+                 color: var(--steel-ink); font-weight: var(--w-print); text-transform: uppercase; letter-spacing: -.02em; }
+.tray { position: fixed; z-index: 41; left: 50%; top: 50%; width: min(560px, calc(100vw - 24px)); max-height: 88svh; overflow: auto; transform: translate(-50%, -46%) scale(.96);
+        opacity: 0; pointer-events: none; transition: opacity .25s, transform .3s; padding: 28px 28px 24px; border-radius: 22px; color: var(--steel-ink);
+        background: linear-gradient(170deg, #F4F7FA 0%, #C9D1DA 40%, #E9EEF3 60%, #AEB9C5 100%); box-shadow: 0 30px 70px rgba(4, 20, 44, .6), inset 0 2px 0 #fff, inset 0 -3px 8px rgba(30, 40, 55, .25); }
+.tray h2 { margin: 6px 0 14px; font-size: clamp(28px, 4vw, 40px); }
+.tray .label { color: #4D5A68; }
+.tray ol { margin: 0; padding: 0 0 0 1.4em; }
+.tray li { padding: 7px 0; border-bottom: 1px solid rgba(27, 38, 50, .15); }
+.tray li b { font-weight: var(--w-print); text-transform: uppercase; letter-spacing: -.01em; }
+.tray li span { display: block; font-size: 15px; color: #3A4654; }
+.tray-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.tray-btns button { all: unset; cursor: pointer; padding: 12px 18px; border-radius: 999px; background: var(--latex); color: #fff; font-weight: var(--w-print);
+                    text-transform: uppercase; letter-spacing: -.02em; font-size: 15px; }
+.tray-btns .ghost { background: none; color: var(--steel-ink); box-shadow: inset 0 0 0 2px rgba(27, 38, 50, .35); }
+body.tray-open .tray { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+body.tray-open #tray-bg { opacity: 1; pointer-events: auto; }
+@media print {
+  body.tray-open > *:not(.tray) { display: none !important; }
+  body.tray-open, html { background: #fff !important; }
+  body.tray-open .tray { position: static; transform: none; opacity: 1; width: auto; max-height: none; box-shadow: none; background: #fff; padding: 0; color: #000; }
+  .tray-btns { display: none; }
+}
+
+/* ---------- № 14 режим «у кресла»: только шаги, без текста, крупные номера ---------- */
+/* переключатель «Полный / У кресла» */
+.mode { display: flex; padding: 3px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--fg-line); flex: none; }
+.mode button { all: unset; cursor: pointer; font-size: 14px; padding: 7px 13px; border-radius: 999px; white-space: nowrap; transition: background .2s, color .2s; }
+.mode button[aria-pressed="true"] { background: var(--ivory-flat); color: var(--steel-ink); font-weight: var(--w-print); }
+.topbar .holes { margin-left: auto; }
+@media (max-width: 480px) { .mode button { padding: 6px 9px; font-size: 12.5px; } .topbar .holes button { width: 14px; } .topbar .holes button.on { width: 22px; } }
+/* экран «у кресла»: шаг на весь экран, ролик сам, огромный номер, большие кнопки — для перчаток */
+.chair { position: fixed; inset: 0; z-index: 15; background: var(--latex-deep); display: grid; grid-template-rows: 1fr auto auto; padding-top: 64px; }
+.chair[hidden] { display: none; }
+body.chair-on { overflow: hidden; }
+body.chair-on .topbar { background: var(--latex-deep); }
+.ch-stage { position: relative; min-height: 0; }
+.ch-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.ch-soon { position: absolute; inset: 0; display: grid; place-items: center; color: var(--fg-soft); }
+.ch-soon[hidden] { display: none; }
+.ch-zone { all: unset; position: absolute; top: 0; bottom: 0; width: 35%; cursor: pointer; }
+.ch-zone.prev { left: 0; } .ch-zone.next { right: 0; }
+.ch-cap { display: flex; align-items: flex-end; gap: 10px 32px; padding: 8px var(--gutter) 0; }
+.ch-cap .mega { font-weight: var(--w-print); font-size: clamp(110px, 17vw, 240px); line-height: .74; letter-spacing: -.07em; }
+.ch-cap h2 { margin: 6px 0 0; font-size: clamp(30px, 4.6vw, 64px); }
+.ch-btns { display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; padding: 20px var(--gutter) calc(20px + env(safe-area-inset-bottom)); }
+.ch-btns button { all: unset; cursor: pointer; text-align: center; padding: 22px 10px; border-radius: 999px; font-weight: var(--w-print); text-transform: uppercase;
+                  letter-spacing: -.02em; font-size: clamp(20px, 2.6vw, 30px); background: var(--ivory-flat); color: var(--steel-ink); }
+.ch-btns #ch-prev { background: none; color: var(--fg); box-shadow: inset 0 0 0 2px var(--fg-line); }
+.ch-btns button:disabled { opacity: .3; cursor: default; }
+@media (max-width: 760px) and (orientation: portrait) { .ch-cap .mega { font-size: 96px; } .ch-cap { flex-wrap: wrap; } }
+@media (max-height: 640px) { .ch-cap .mega { font-size: 80px; } .ch-btns button { padding: 14px 10px; } }
+@media (max-width: 480px) { .topbar .back .wide { display: none; } .topbar .back { padding: 10px 4px; font-size: 20px; } }
+
+/* ---------- «Что умеет атлас»: отверстия-возможности ---------- */
+.feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 40px 28px; padding-top: 56px; }
+.feat { display: flex; flex-direction: column; gap: 10px; }
+.feat .hole { width: min(110px, 26vw); transition: background .3s, box-shadow .3s, transform .3s; }
+.feat:hover .hole, .feat:focus-visible .hole { background: var(--ivory); box-shadow: var(--hole-rim); transform: scale(1.06); }
+.feat b { font-size: clamp(20px, 2vw, 26px); margin-top: 8px; }
+.feat small { font-size: 15px; line-height: 1.4; color: var(--fg-soft); max-width: 18em; }
+.feat:hover { color: var(--fg); }
+/* клампы: ряд бирок, нажатие — когда он нужен */
+.clamps .tags { display: flex; flex-wrap: wrap; gap: 14px; }
+.clamps .tags .tag { all: unset; cursor: pointer; display: inline-block; padding: 14px 20px; border-radius: 6px; font-weight: var(--w-print); font-size: clamp(22px, 2.6vw, 34px);
+                     line-height: 1; color: var(--steel-ink); background: var(--steel); box-shadow: var(--steel-shadow); text-shadow: 0 1px 0 rgba(255, 255, 255, .8);
+                     transition: transform .2s; }
+.clamps .tags .tag:hover { transform: rotate(-3deg); }
+.clamps .tags .tag[aria-pressed="true"] { background: var(--ivory-flat); transform: translateY(-4px); }
+.cinfo { margin-top: 28px; min-height: 110px; max-width: 40em; }
+.cinfo.in { animation: arrive .35s ease-out; }
+.cinfo .where { font-weight: var(--w-print); font-size: clamp(22px, 2.6vw, 34px); letter-spacing: -.03em; text-transform: uppercase; line-height: 1.05; }
+.cinfo .note { margin-top: 8px; color: var(--fg-soft); font-size: clamp(16px, 1.4vw, 19px); }
+/* главная оживает: платок «дышит», отверстия пробиваются по очереди, подсказка «нажмите на платок» */
+.hero img { animation: breathe 24s ease-in-out infinite alternate; transform-origin: 60% 55%; }
+@keyframes breathe { from { transform: scale(1) } to { transform: scale(1.06) translateY(-1%) } }
+.hero .tap { position: absolute; z-index: 1; left: var(--gutter); bottom: 52px; font-size: var(--fs-small); color: var(--fg-soft); display: flex; align-items: center; gap: 10px; }
+.hero .tap::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--hole); box-shadow: var(--hole-shadow); animation: blink 2.6s ease-in-out infinite; }
+@keyframes blink { 0%, 100% { transform: scale(.6) } 15% { transform: scale(1.1) } 30%, 70% { transform: scale(1) } }
+.pre:not(.punched) .hole { transform: scale(0); }
+.pre.punched .hole { animation: pop .55s cubic-bezier(.3, 1.6, .5, 1) var(--d, 0s) backwards; }
+@keyframes pop { 0% { transform: scale(0) } 100% { transform: scale(1) } }
+@media (max-width: 600px) { .hero .tap { display: none; } .feats { grid-template-columns: 1fr 1fr; gap: 32px 18px; } .feat .hole { width: 84px; } }
+@media (prefers-reduced-motion: reduce) { .hero img, .hero .tap::before { animation: none; } }
+.feat .hole { display: grid; place-items: center; color: var(--ivory-flat); }
+.feat .hole svg { width: 44%; height: 44%; transition: color .3s; }
+.feat:hover .hole svg, .feat:focus-visible .hole svg { color: var(--steel-ink); }

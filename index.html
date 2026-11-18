@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17559C">
+<title>Атлас изоляции</title>
+<meta name="description" content="Пошаговая 3D-изоляция коффердамом: какой кламп, какое отверстие, какие шаги. Рубрика «Сухое поле» @dr.beglary.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;800&display=swap">
+<link rel="stylesheet" href="tokens.css?v=2026111822">
+<link rel="stylesheet" href="atlas.css?v=2026111822">
+</head>
+<body data-page="home">
+<header class="hero" id="top">
+  <img src="media/hero.webp" alt="Изоляция готова: кламп на моляре, платок на зубах, вид глазами врача">
+  <div>
+    <div class="rubric">Сухое поле · @dr.beglary · Атлас изоляции</div>
+    <h1 class="print">Неизоли&shy;руемых зубов нет</h1>
+  </div>
+  <p class="print">Есть недо&shy;изолированные</p>
+  <div class="tap" aria-hidden="true">нажмите на платок</div>
+</header>
+
+<main>
+  <section class="sits wrap" id="sits">
+    <p>Шесть отверстий — шесть ситуаций. Отверстие, в котором виден зуб, уже готово.</p>
+    <div class="arc" id="arc"></div>
+    <ol class="sitlist" id="sitlist"></ol>
+  </section>
+
+  <section class="block wrap can" id="can">
+    <h2 class="print">Что умеет атлас</h2>
+    <p class="sub">Наведите на отверстие — в нём покажется зуб. Нажмите — попробуете.</p>
+    <div class="feats" id="feats"></div>
+  </section>
+
+  <section class="block wrap" id="punch">
+    <h2 class="print">Пробойник</h2>
+    <p class="sub">Пять отверстий, от большего к меньшему. Нажмите на отверстие — на схеме платка проступят зубы, которым оно подходит.</p>
+    <div class="punch5" id="punch5"></div>
+    <div class="dam" id="dam"></div>
+  </section>
+
+  <section class="block wrap" id="clamps">
+    <h2 class="print">Клампы</h2>
+    <p class="sub">Номер выбит на стали, как на настоящем клампе. Нажмите на бирку — узнаете, когда он нужен.</p>
+    <div class="clamps" id="clamplist"></div>
+  </section>
+</main>
+
+<!-- рамка как меню: стальной пруток с шипами по краю экрана, пункты висят на шипах -->
+<nav class="frame" id="frame" aria-label="Разделы">
+  <i class="rod" aria-hidden="true"></i>
+  <a href="#sits"><span>Ситуации</span><i class="spike" aria-hidden="true"></i></a>
+  <a href="#can"><span>Возможности</span><i class="spike" aria-hidden="true"></i></a>
+  <a href="#punch"><span>Пробойник</span><i class="spike" aria-hidden="true"></i></a>
+  <a href="#clamps"><span>Клампы</span><i class="spike" aria-hidden="true"></i></a>
+  <a href="#top"><span>Наверх</span><i class="spike" aria-hidden="true"></i></a>
+</nav>
+
+<footer class="outro">
+  <b>Атлас изоляции</b>
+  <span id="check">Высушить платок и зубы, смотреть в динамике.</span>
+</footer>
+<script src="app.js?v=2026111822"></script>
+</body>
+</html>
