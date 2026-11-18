@@ -13,7 +13,7 @@
     return e;
   }
 
-  fetch("situations.json").then(function (r) { return r.json(); }).then(function (D) {
+  fetch("situations.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (D) {
     if (document.body.dataset.page === "home") home(D); else situation(D);
   });
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
