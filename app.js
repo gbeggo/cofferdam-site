@@ -278,20 +278,25 @@
       main.appendChild(sec); scrubbers.push(new Scrubber(sec, cv, bar, load, st.media));
     });
     // ошибка — разрыв платка, в нём видна десна; план Б — длинный разрез; проверка — крупной строкой
-    var mk = S.mistakes[0], tear = el("button", { "class": "tear", type: "button" }, [el("div", { "class": "label", text: "Частая ошибка" }),
-      el("div", { "class": "print", text: mk.title }), el("div", { "class": "more", text: "Как не ошибиться" })]);
-    var side = el("div", { "class": "side" }, [el("p", { "class": "label", text: "Ошибка — это разрыв. В нём видна десна." })]);
-    if (mk.fix && mk.fix !== "—") side.appendChild(el("p", { "class": "print", text: mk.fix }));
-    main.appendChild(el("section", { "class": "after wrap" }, [tear, side]));
-    var slit = el("div", { "class": "slit", "aria-hidden": "true" }); for (var k = 0; k < 4; k++) slit.appendChild(el("span"));
-    main.appendChild(el("section", { "class": "planb wrap" }, [el("div", {}, [el("div", { "class": "label", text: "План Б" }),
-      el("div", { "class": "print", text: S.planB.title }), el("p", { text: S.planB.text })]), slit]));
+    var mk = (S.mistakes || [])[0], tear = null;                              // пока ошибки/плана Б нет в словах Георгия — блок не показываем
+    if (mk) {
+      tear = el("button", { "class": "tear", type: "button" }, [el("div", { "class": "label", text: "Частая ошибка" }),
+        el("div", { "class": "print", text: mk.title }), el("div", { "class": "more", text: "Как не ошибиться" })]);
+      var side = el("div", { "class": "side" }, [el("p", { "class": "label", text: "Ошибка — это разрыв. В нём видна десна." })]);
+      if (mk.fix && mk.fix !== "—") side.appendChild(el("p", { "class": "print", text: mk.fix }));
+      main.appendChild(el("section", { "class": "after wrap" }, [tear, side]));
+    }
+    if (S.planB) {
+      var slit = el("div", { "class": "slit", "aria-hidden": "true" }); for (var k = 0; k < 4; k++) slit.appendChild(el("span"));
+      main.appendChild(el("section", { "class": "planb wrap" }, [el("div", {}, [el("div", { "class": "label", text: "План Б" }),
+        el("div", { "class": "print", text: S.planB.title }), el("p", { text: S.planB.text })]), slit]));
+    }
     main.appendChild(el("section", { "class": "check wrap" }, [el("div", { "class": "label", text: "Проверка" }), el("p", { "class": "print", text: D.check })]));
     var sheet = document.getElementById("sheet"), body = sheet.querySelector(".content");
-    S.mistakes.forEach(function (m) { body.appendChild(el("h3", { "class": "print", text: m.title })); body.appendChild(el("p", { text: m.text }));
+    (S.mistakes || []).forEach(function (m) { body.appendChild(el("h3", { "class": "print", text: m.title })); body.appendChild(el("p", { text: m.text }));
       if (m.fix && m.fix !== "—") body.appendChild(el("p", { "class": "fix", text: m.fix })); });
     function toggle(on) { document.body.classList.toggle("sheet-open", on); }
-    tear.addEventListener("click", function () { toggle(true); });
+    if (tear) tear.addEventListener("click", function () { toggle(true); });
     document.getElementById("sheet-bg").addEventListener("click", function () { toggle(false); });
     sheet.querySelector(".close").addEventListener("click", function () { toggle(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") toggle(false); });
