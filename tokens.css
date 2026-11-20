@@ -2,20 +2,22 @@
    латекс (фон), слоновая кость зуба (готово, активно), сталь (инструменты), розовая десна (ошибка), тёмное отверстие (впереди).
    ВСЕ цвета, шрифты и размеры — только здесь, в atlas.css только var(--…). Прежний дизайн «Кардинал» — в истории git (до 18.11). */
 :root {
-  --latex: #17559C;            /* платок; сменить цвет платка = поменять эту строку (рендеры пока синие) */
+  --latex: #17559C;            /* платок (голубая тема); зелёная и фиолетовая — ниже, [data-dam] на <html> */
   --latex-deep: #103C70;       /* тень платка, затемнение у краёв */
   --latex-rgb: 23, 85, 156;
+  --deep-rgb: 16, 60, 112;     /* тень платка для полупрозрачных градиентов */
+  --ink-rgb: 6, 26, 51;        /* самая тёмная тень (под шторками, тень под сталью) */
   --hole: #061A33;             /* пробитое, пустое отверстие */
   --hole-shadow: inset 0 8px 14px rgba(0, 0, 0, .8), 0 2px 0 rgba(255, 255, 255, .28);
-  --hole-rim: 0 0 0 5px rgba(8, 34, 68, .55);
+  --hole-rim: 0 0 0 5px rgba(var(--ink-rgb), .55);
   --ivory: radial-gradient(circle at 42% 38%, #FFF8E6 0%, #EADCB8 58%, #B9A678 100%);
   --ivory-flat: #F3E8CC;
   --steel: linear-gradient(175deg, #F4F7FA 0%, #AEB9C5 46%, #E6ECF2 54%, #8E9AA8 100%);
   --steel-ink: #1B2632;
-  --steel-shadow: 0 6px 14px rgba(4, 20, 44, .45), inset 0 1px 0 #FFFFFF;
+  --steel-shadow: 0 6px 14px rgba(var(--ink-rgb), .45), inset 0 1px 0 #FFFFFF;
   --gum: radial-gradient(ellipse at 40% 35%, #FFC9C2 0%, #F2A199 60%, #D9796F 100%);
   --gum-ink: #4A1512;
-  --gum-shadow: inset 0 10px 18px rgba(90, 20, 16, .45), 0 0 0 6px rgba(8, 34, 68, .5);
+  --gum-shadow: inset 0 10px 18px rgba(90, 20, 16, .45), 0 0 0 6px rgba(var(--ink-rgb), .5);
 
   --fg: #FFFFFF;
   --fg-soft: rgba(255, 255, 255, .78);
@@ -35,4 +37,15 @@
 
   --gutter: max(16px, 4vw);
   --c-stage: var(--latex);     /* фон под кадрами (подменяется цветом угла кадра) */
+}
+
+/* Цвет платка — тема сайта (Георгий 21.11). Кадры и ролики в тех же цветах: site/build_themes.py (перекраска recolor.py).
+   Цвета ниже — те же синие, пропущенные через ту же перекраску; зелёный фон чуть темнее, чтобы белый текст читался (≥ 5:1). */
+:root[data-dam="green"] {
+  --latex: #286E54; --latex-deep: #1D5240; --latex-rgb: 40, 110, 84; --deep-rgb: 29, 82, 64; --ink-rgb: 12, 34, 26;
+  --hole: #0F271E;
+}
+:root[data-dam="violet"] {
+  --latex: #653986; --latex-deep: #482960; --latex-rgb: 101, 57, 134; --deep-rgb: 72, 41, 96; --ink-rgb: 30, 16, 40;
+  --hole: #1F1129;
 }

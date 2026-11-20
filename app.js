@@ -13,14 +13,34 @@
     return e;
   }
 
+  /* ---------- цвет платка — тема сайта: голубой / зелёный / фиолетовый (Георгий 21.11). Тема ставится в <head> до отрисовки
+     (data-dam на <html>, выбор хранится на устройстве). Кадры, ролики и обложки в том же цвете лежат рядом: <шаг>/<тема>/,
+     cover-<тема>.webp, hero-<тема>.webp (site/build_themes.py) ---------- */
+  var DAMS = [{ id: "", name: "Голубой", c: "#17559C", hi: "#6FA6DC" }, { id: "green", name: "Зелёный", c: "#286E54", hi: "#76B99A" },
+              { id: "violet", name: "Фиолетовый", c: "#653986", hi: "#9870BD" }];
+  function damNow() { return document.documentElement.dataset.dam || ""; }
+  function damData(D) {                                   // пути к кадрам и обложкам — под текущий цвет платка
+    var d = damNow();
+    Object.keys(D.situations).forEach(function (k) {
+      var s = D.situations[k];
+      if (s.cover0 === undefined) s.cover0 = s.cover || "";
+      s.cover = s.cover0 && d ? s.cover0.replace(/cover\.webp$/, "cover-" + d + ".webp") : s.cover0;
+      (s.steps || []).forEach(function (st) {
+        if (!st.media) return; if (!st.media.dir0) st.media.dir0 = st.media.dir;
+        st.media.dir = st.media.dir0 + (d ? d + "/" : "");
+      });
+    });
+  }
+
   fetch("situations.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (D) {
+    damData(D);
     if (document.body.dataset.page === "home") home(D); else situation(D);
   });
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
 
   /* ---------- курсор-пробойник: нажатие на свободное место оставляет в платке отверстие, оно затягивается ---------- */
   if (!calm) document.addEventListener("click", function (e) {
-    if (e.target.closest("a,button,summary,canvas,video,input,.step,.sheet,.tear,.t")) return;
+    if (e.target.closest("a,button,summary,canvas,video,input,.step,.sheet,.tear,.t,.hero")) return;
     var m = el("i", { "class": "punchmark", "aria-hidden": "true" }); m.style.left = e.clientX + "px"; m.style.top = e.clientY + "px";
     document.body.appendChild(m); setTimeout(function () { m.remove(); }, 2500);
   });
@@ -45,12 +65,12 @@
     ids.sort(function (a, b) { return D.situations[a].n - D.situations[b].n; });
     // шесть отверстий по дуге (слева направо — номера ситуаций); в готовом виден зуб — кадр ситуации
     var POS = [[6, 66, 11], [21.5, 30, 10.5], [38.5, 6, 10], [53.5, 6, 10], [68.5, 30, 10.5], [83, 66, 11]];
-    var arc = document.getElementById("arc"), list = document.getElementById("sitlist");
+    var arc = document.getElementById("arc"), list = document.getElementById("sitlist"), covers = [];
     ids.forEach(function (id, i) {
       var s = D.situations[id], ready = s.status === "ready", href = "situation.html?id=" + id, P = POS[i] || POS[5];
       var h = el(ready ? "a" : "span", { "class": "hole" + (ready ? " pic" : ""), "aria-label": "Ситуация " + s.n + ": " + s.title + (ready ? "" : " — скоро") });
       h.style.left = P[0] + "%"; h.style.top = P[1] + "%"; h.style.width = P[2] + "%";
-      if (ready) { h.href = href; if (s.cover) h.style.backgroundImage = "url(" + s.cover + ")"; else h.className = "hole tooth"; }
+      if (ready) { h.href = href; if (s.cover) { h.style.backgroundImage = "url(" + s.cover + ")"; covers.push([h, s]); } else h.className = "hole tooth"; }
       h.appendChild(el("span", { "class": "n", text: s.n, "aria-hidden": "true" }));
       arc.appendChild(h);
       var li = el("li", { "class": ready ? "ready" : "" });
@@ -60,6 +80,7 @@
       function go(e) { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); portal(href, h, s.cover); }
       if (ready) { h.addEventListener("click", go); li.querySelector("a").addEventListener("click", go); }
     });
+    heroFX(D, function () { covers.forEach(function (c) { c[0].style.backgroundImage = "url(" + c[1].cover + ")"; }); });
     frameNav();
     punchScheme(D.punch);
     feats(D, ids);
@@ -79,6 +100,91 @@
     box.appendChild(info); box.appendChild(view.node);
     cl.appendChild(tags); cl.appendChild(box);
     punchIn();
+  }
+
+  /* ---------- первый экран оживает сразу (Георгий 21.11: «чтобы сайт сразу интерактивил с пользователем»):
+     1) «Цвет платка» — три кружка; нажатие — новый платок расходится кругом от кружка по всей странице;
+     2) нажатие на платок пробивает отверстие — пять нажатий, пять отверстий от большего к меньшему, как на пробойнике;
+        после пятого — подсказка и ссылка на схему пробойника; шестое нажатие — платок затягивается, можно снова ---------- */
+  // «Цвет платка»: подпись и три кружка; pick(id, кнопка) — что делать при выборе
+  function swatches(box, pick) {
+    var row = el("div", { "class": "row" });
+    box.appendChild(el("span", { "class": "lbl", text: "Цвет платка" })); box.appendChild(row);
+    return DAMS.map(function (m) {
+      var b = el("button", { type: "button", "class": "sw", "aria-label": "Платок: " + m.name.toLowerCase(), title: m.name, "aria-pressed": String(m.id === damNow()) });
+      b.style.setProperty("--c", m.c); b.style.setProperty("--hi", m.hi);
+      b.addEventListener("click", function () { if (m.id !== damNow()) pick(m.id, b); });
+      row.appendChild(b); return b;
+    });
+  }
+  // на странице ситуации: новый цвет расходится кругом от кружка, страница открывается заново на том же месте
+  // (кадры шагов уже загружены в старом цвете — проще и надёжнее загрузить заново)
+  function reloadDam(d, b) {
+    try { localStorage.setItem("atlas-dam", d); sessionStorage.setItem("atlas-scroll", String(scrollY)); } catch (e) {}
+    var u = new URL(location.href); u.searchParams.delete("dam");
+    if (calm) { location.replace(u.href); return; }
+    var r = b.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, c = DAMS.filter(function (m) { return m.id === d; })[0].c;
+    var p = el("div", { "class": "portal" }); p.style.background = c; p.style.clipPath = "circle(0px at " + x + "px " + y + "px)";
+    document.body.appendChild(p); p.getBoundingClientRect();
+    p.style.clipPath = "circle(" + Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + "px at " + x + "px " + y + "px)";
+    setTimeout(function () { location.replace(u.href); }, 640);
+  }
+
+  function heroFX(D, refresh) {
+    var hero = document.querySelector(".hero"), img = document.getElementById("hero-img"), box = document.getElementById("damsw"), tap = document.getElementById("tap");
+    if (!hero || !box || !img) return;
+    var btns = swatches(box, function (d, b) { setDam(d, b); });
+    var cue = document.getElementById("scrollcue");                       // «Листайте»: плавно к ситуациям, прячется после прокрутки
+    if (cue) {
+      cue.addEventListener("click", function (e) { e.preventDefault(); var t = document.getElementById("sits"); scrollTo({ top: t.getBoundingClientRect().top + scrollY - 20, behavior: calm ? "auto" : "smooth" }); });
+      addEventListener("scroll", function () { cue.classList.toggle("gone", scrollY > 40); }, { passive: true });
+    }
+    function heroSrc(d) { var x = d ? "-" + d : ""; return { src: "media/hero" + x + ".webp", srcset: "media/hero" + x + "-1600.webp 1600w, media/hero" + x + ".webp 3200w" }; }
+    function setDam(d, b) {
+      var h = heroSrc(d), pre = new Image(), r = b.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      pre.sizes = "100vw"; pre.srcset = h.srcset; pre.src = h.src;
+      function apply() {
+        if (d) document.documentElement.dataset.dam = d; else delete document.documentElement.dataset.dam;
+        try { localStorage.setItem("atlas-dam", d); } catch (e) {}
+        var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = DAMS.filter(function (m) { return m.id === d; })[0].c;
+        img.srcset = h.srcset; img.src = h.src;
+        btns.forEach(function (x, i) { x.setAttribute("aria-pressed", String(DAMS[i].id === d)); });
+        damData(D); refresh();
+      }
+      var ready = pre.decode ? pre.decode().catch(function () {}) : Promise.resolve();
+      ready.then(function () {
+        if (calm || !document.startViewTransition) { apply(); return; }
+        var t = document.startViewTransition(apply);
+        t.ready.then(function () {
+          var R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+          document.documentElement.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + R + "px at " + x + "px " + y + "px)"] },
+            { duration: 900, easing: "cubic-bezier(.6, 0, .3, 1)", pseudoElement: "::view-transition-new(root)" });
+        }).catch(function () {});
+      });
+    }
+    // пробойник по платку
+    var holes = [], K = [1, .82, .66, .52, .4], hint = tap ? tap.innerHTML : "";
+    hero.addEventListener("click", function (e) {
+      if (e.target.closest("a,button,.damsw")) return;
+      if (holes.length >= 5) { heal(); return; }
+      var r = hero.getBoundingClientRect(), d = Math.min(84, Math.max(46, innerWidth * 0.06)) * K[holes.length];
+      var h = el("i", { "class": "hh", "aria-hidden": "true" }, [el("b", { text: holes.length + 1 })]);
+      h.style.left = (e.clientX - r.left) + "px"; h.style.top = (e.clientY - r.top) + "px"; h.style.width = h.style.height = d + "px";
+      hero.appendChild(h); holes.push(h);
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (er) {}
+      if (!tap) return;
+      if (holes.length === 5) {
+        tap.innerHTML = ""; tap.classList.add("done");
+        tap.appendChild(document.createTextNode("Пять отверстий — как на пробойнике, от большего к меньшему. "));
+        var a = el("a", { href: "#punch", text: "Какое — на какой зуб →" });
+        a.addEventListener("click", function (ev) { ev.preventDefault(); var t = document.getElementById("punch"); scrollTo({ top: t.getBoundingClientRect().top + scrollY - 20, behavior: calm ? "auto" : "smooth" }); });
+        tap.appendChild(a);
+      } else { tap.classList.remove("done"); tap.textContent = "Ещё " + (5 - holes.length) + " — пробойник идёт от большего к меньшему"; }
+    });
+    function heal() {
+      holes.forEach(function (h) { h.classList.add("heal"); setTimeout(function () { h.remove(); }, 600); }); holes = [];
+      if (tap) { tap.classList.remove("done"); tap.innerHTML = hint; }
+    }
   }
 
   // 3D-модель клампа (из Tripo, облегчённая h1_clamp_web.py): крутится сама, можно повернуть пальцем/мышью.
@@ -132,7 +238,7 @@
       { t: "Список ассистенту", d: "Что разложить в лоток — одной кнопкой: распечатать или отправить.", go: "situation.html?id=" + demo + "&tray=1" },
       { t: "Пробойник", d: "Какое отверстие — на какой зуб: нажмите отверстие, проступят зубы.", go: "#punch" },
       { t: "Клампы", d: "Какой кламп — когда: номер выбит на стальной бирке.", go: "#clamps" },
-      { t: "Пробейте платок", d: "Нажмите куда угодно на синем — останется отверстие. Оно затянется.", go: "punch" }
+      { t: "Пробейте платок", d: "Нажмите куда угодно на платке — останется отверстие. Оно затянется.", go: "punch" }
     ];
     F.forEach(function (f, i) {
       var hole = el("span", { "class": "hole", html: ICONS[i] });
@@ -245,6 +351,8 @@
     main.appendChild(el("section", { "class": "intro wrap" }, [el("div", { "class": "mega", text: pad2(S.n), "aria-hidden": "true" }),
       el("div", {}, [el("div", { "class": "label", text: (S.status === "draft" ? "Черновик · " : "Ситуация " + S.n + " · ") + "поле " + S.field }),
         el("h1", { "class": "print", text: S.title }), el("p", { text: S.lead })])]));
+    var sw = el("div", { "class": "damsw inline", role: "group", "aria-label": "Цвет платка" }); swatches(sw, reloadDam);
+    main.firstChild.lastChild.appendChild(sw);
     if (S.cover) main.appendChild(el("div", { "class": "cover" }, [el("img", { src: S.cover, alt: "Исходная картина: " + S.short, loading: "eager" })]));
     var take = el("section", { "class": "take wrap" }, [el("h2", { text: "Что берём" })]);
     S.take.forEach(function (t) {
@@ -308,6 +416,7 @@
       nav.appendChild(b); secs.push(document.getElementById("step-" + st.n));
     });
     bar0.appendChild(nav);
+    try { var sy = sessionStorage.getItem("atlas-scroll"); if (sy !== null) { sessionStorage.removeItem("atlas-scroll"); history.scrollRestoration = "manual"; scrollTo(0, +sy); setTimeout(function () { dispatchEvent(new Event("scroll")); }, 50); } } catch (e) {}
     var CH = chairMode(S) || { isOn: function () { return false; } };
     var curNav = -2;
     function navTick() {
