@@ -30,7 +30,7 @@ button { font: inherit; color: inherit; }
 
 /* шесть отверстий по дуге */
 .sits { padding-top: 72px; }
-.sits > p { margin: 0; max-width: 30em; }
+.sits > h2 { margin: 0; max-width: 12em; font-size: var(--fs-h2); }
 .arc { position: relative; width: 100%; aspect-ratio: 3 / 1; margin-top: 24px; }
 .arc .hole { position: absolute; transition: transform .25s ease; }
 .arc a.hole:hover, .arc a.hole:focus-visible { transform: scale(1.08); }
@@ -116,6 +116,7 @@ footer.outro b { font-weight: var(--w-print); text-transform: uppercase; letter-
 .take .tag.soft { color: var(--fg); background: none; box-shadow: none; text-shadow: none; border: 1px dashed var(--fg); border-radius: 999px; }
 .take .note { flex: 1 1 280px; color: var(--fg-soft); }
 .take .note a { color: var(--fg); border-bottom: 1px solid var(--fg-line); }
+.take .note .ln + .ln { margin-top: 4px; }
 
 /* шаг: прокрутка ведёт кадры */
 .step { position: relative; background: var(--latex); }

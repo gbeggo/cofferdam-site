@@ -60,7 +60,6 @@
 
   /* ================= главная ================= */
   function home(D) {
-    document.getElementById("check").textContent = D.check;
     var ids = []; D.groups.forEach(function (g) { g.items.forEach(function (id) { ids.push(id); }); });
     ids.sort(function (a, b) { return D.situations[a].n - D.situations[b].n; });
     // шесть отверстий по дуге (слева направо — номера ситуаций); в готовом виден зуб — кадр ситуации
@@ -357,8 +356,8 @@
     var take = el("section", { "class": "take wrap" }, [el("h2", { text: "Что берём" })]);
     S.take.forEach(function (t) {
       var soft = /Платок|Нитка|Тефлон/.test(t.what);
-      var note = el("div", { "class": "note" }, [t.note]);
-      if (t.link) { note.appendChild(document.createTextNode(" ")); note.appendChild(el("a", { href: t.link, text: "схема" })); }
+      var note = el("div", { "class": "note" }, Array.isArray(t.note) ? t.note.map(function (x) { return el("div", { "class": "ln", text: x }); }) : [t.note]);
+      if (t.link) { var ln = Array.isArray(t.note) ? note.lastChild : note; ln.appendChild(document.createTextNode(" ")); ln.appendChild(el("a", { href: t.link, text: "схема" })); }
       take.appendChild(el("div", { "class": "row" }, [el("span", { "class": "tag" + (soft ? " soft" : ""), text: t.what }), t.note || t.link ? note : null]));
     });
     var tb = el("button", { "class": "traybtn", type: "button", text: "Список ассистенту" }); take.appendChild(tb);
@@ -401,7 +400,7 @@
     }
     main.appendChild(el("section", { "class": "check wrap" }, [el("div", { "class": "label", text: "Проверка" }), el("p", { "class": "print", text: D.check })]));
     var sheet = document.getElementById("sheet"), body = sheet.querySelector(".content");
-    (S.mistakes || []).forEach(function (m) { body.appendChild(el("h3", { "class": "print", text: m.title })); body.appendChild(el("p", { text: m.text }));
+    (S.mistakes || []).forEach(function (m) { body.appendChild(el("h3", { "class": "print", text: m.title })); if (m.text) body.appendChild(el("p", { text: m.text }));
       if (m.fix && m.fix !== "—") body.appendChild(el("p", { "class": "fix", text: m.fix })); });
     function toggle(on) { document.body.classList.toggle("sheet-open", on); }
     if (tear) tear.addEventListener("click", function () { toggle(true); });
@@ -438,6 +437,7 @@
     document.getElementById("tray-sub").textContent = sub;
     // в лоток — только то, что ассистент готовит сам (у пункта может быть своя формулировка "tray"; tray: false — не класть)
     var items = S.take.filter(function (t) { return t.tray !== false; }).map(function (t) { return t.tray || t; });
+    items = items.map(function (t) { return Array.isArray(t.note) ? { what: t.what, note: t.note.map(function (x, i) { return i ? x.charAt(0).toLowerCase() + x.slice(1) : x; }).join("; ") } : t; });
     items.forEach(function (t) { list.appendChild(el("li", {}, [el("b", { text: t.what }), t.note ? el("span", { text: t.note }) : null])); });
     var txt = "Лоток ассистента — " + sub + "\n" + items.map(function (t, i) { return (i + 1) + ". " + t.what + (t.note ? " — " + t.note : ""); }).join("\n");
     function open(on) { document.body.classList.toggle("tray-open", on); }
