@@ -34,6 +34,8 @@ button { font: inherit; color: inherit; }
 .arc { position: relative; width: 100%; aspect-ratio: 3 / 1; margin-top: 24px; }
 .arc .hole { position: absolute; transition: transform .25s ease; }
 .arc a.hole:hover, .arc a.hole:focus-visible { transform: scale(1.08); }
+.sits > .sub { margin: 14px 0 0; color: var(--fg-soft); }
+.arc .cap { display: none; }
 .arc .n { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 10px); font-weight: var(--w-print); font-size: clamp(14px, 1.6vw, 22px); color: var(--fg); }
 .sitlist { margin: 48px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; line-height: 1.3; }
 .sitlist li { border-top: 1px solid var(--fg-line); padding-top: 12px; color: var(--fg-soft); }
@@ -389,3 +391,16 @@ html, body { transition: background-color .6s ease; }
 @keyframes thread { 0% { transform: translateY(-4px); opacity: 0 } 15% { opacity: 1 } 75% { transform: translateY(38px); opacity: 1 } 100% { transform: translateY(42px); opacity: 0 } }
 .scrollcue.gone { opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .scrollcue i::after { animation: none; top: 17px; } }
+
+/* телефон: шесть ситуаций — крупные отверстия сеткой по два, подпись под каждым (Георгий 26.11: «явно заметными… чуть ли не на пол экрана») */
+@media (max-width: 600px) {
+  .arc { aspect-ratio: auto; display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; row-gap: 0; margin-top: 28px; padding-bottom: 36px; }
+  .arc .hole { position: relative; left: auto !important; top: auto !important; width: 100% !important; margin-bottom: 86px; }
+  .arc .hole:nth-child(even) { top: 40px !important; }
+  .arc .n { display: none; }
+  .arc .cap { display: block; position: absolute; left: -4px; right: -4px; top: 100%; margin-top: 12px; text-align: center; line-height: 1.2; color: var(--fg); }
+  .arc .cap b { display: block; font-size: 16px; font-weight: 600; }
+  .arc .cap i { font-style: normal; font-weight: var(--w-print); margin-right: 6px; }
+  .arc .cap small { display: block; margin-top: 4px; font-size: 13px; color: var(--fg-soft); }
+  .sitlist { display: none; }
+}

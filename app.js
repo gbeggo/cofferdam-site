@@ -71,6 +71,8 @@
       h.style.left = P[0] + "%"; h.style.top = P[1] + "%"; h.style.width = P[2] + "%";
       if (ready) { h.href = href; if (s.cover) { h.style.backgroundImage = "url(" + s.cover + ")"; covers.push([h, s]); } else h.className = "hole tooth"; }
       h.appendChild(el("span", { "class": "n", text: s.n, "aria-hidden": "true" }));
+      // подпись под отверстием — видна на телефоне, где отверстия крупные и стоят сеткой (Георгий 26.11: «чтобы было явно понятно, что надо нажать»)
+      h.appendChild(el("span", { "class": "cap", "aria-hidden": "true" }, [el("b", {}, [el("i", { text: s.n }), document.createTextNode(s.title)]), s.field ? el("small", { text: "поле " + s.field }) : null]));
       arc.appendChild(h);
       var li = el("li", { "class": ready ? "ready" : "" });
       var inner = [el("b", { text: s.n }), document.createTextNode(s.title + (ready ? " →" : "")), el("small", { text: ready ? (s.field ? "поле " + s.field : "") : "скоро" })];
